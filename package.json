@@ -1,0 +1,16 @@
+{
+  "type": "module",
+  "name": "aoc2025",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "start": "NODE_OPTIONS='--disable-warning=ExperimentalWarning' node src/day01.ts < input.txt",
+    "dev": "NODE_OPTIONS='--disable-warning=ExperimentalWarning' node src/day01.ts < input.dev.txt"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/node": "^24.0.15"
+  }
+}
