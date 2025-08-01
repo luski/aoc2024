@@ -9,7 +9,7 @@ type StepData = {
 };
 
 let { board, startingPoint } = await readInput();
-console.log("Part 1:", solution1());
+console.log("Part 1:", solution1()?.size);
 console.log("Part 2:", solution2());
 
 async function readInput() {
@@ -49,11 +49,9 @@ function solution1() {
 
   let currentField = board[pt[0]][pt[1]];
   const stepsHistory = new Set<string>();
+  stepsHistory.add(`${direction}|${pt[0]}|${pt[1]}`);
 
-  while (currentField === "." || currentField === "X") {
-    if (currentField === ".") {
-      board[pt[0]][pt[1]] = "X";
-    }
+  while (currentField === ".") {
     const step = go(direction, pt);
     if (!step) {
       break;
@@ -62,7 +60,6 @@ function solution1() {
       direction = step.direction;
       const stepHash = `${direction}|${pt[0]}|${pt[1]}`;
       if (stepsHistory.has(stepHash)) {
-        cleanBoard();
         return null;
       } else {
         stepsHistory.add(stepHash);
@@ -70,27 +67,25 @@ function solution1() {
     }
   }
 
-  const result = board.reduce(
-    (acc, line) => acc + line.filter((c) => c === "X").length,
-    0,
+  return new Set(
+    [...stepsHistory].map((step) => step.split("|").slice(1).join("|")),
   );
-  cleanBoard();
-  return result;
 }
 
 function solution2() {
   let result = 0;
+  const visitedPoints = solution1()!;
 
-  for (let i = 0; i < board.length; i++) {
-    for (let j = 0; j < board[0].length; j++) {
-      if (board[i][j] === ".") {
-        board[i][j] = "#";
-        if (solution1() === null) {
-          result += 1;
-        }
-        board[i][j] = ".";
-      }
+  for (const pointHash of visitedPoints) {
+    const [i, j] = pointHash.split("|").map(Number);
+    if (i === startingPoint[0] && j === startingPoint[1]) {
+      continue;
     }
+    board[i][j] = "#";
+    if (solution1() === null) {
+      result += 1;
+    }
+    board[i][j] = ".";
   }
 
   return result;
@@ -132,8 +127,4 @@ function go(direction: Direction, pt: [number, number]): StepData | null {
     return { pt, direction: nextDirection };
   }
   return { pt: nextPt, direction };
-}
-
-function cleanBoard() {
-  board = board.map((line) => line.map((c) => (c === "X" ? "." : c)));
 }
