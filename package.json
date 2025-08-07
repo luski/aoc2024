@@ -4,13 +4,14 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "start": "NODE_OPTIONS='--disable-warning=ExperimentalWarning' node src/day08.ts < input.txt",
-    "dev": "NODE_OPTIONS='--disable-warning=ExperimentalWarning' node src/day08.ts < input.dev.txt"
+    "start": "NODE_OPTIONS='--disable-warning=ExperimentalWarning' node src/day09.ts < input.txt",
+    "dev": "NODE_OPTIONS='--disable-warning=ExperimentalWarning' node src/day09.ts < input.dev.txt"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@types/node": "^24.0.15"
+    "@types/node": "^24.0.15",
+    "es-toolkit": "^1.39.8"
   }
 }
