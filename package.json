@@ -4,8 +4,8 @@
 	"version": "1.0.0",
 	"main": "index.ts",
 	"scripts": {
-		"start": "NODE_OPTIONS='--disable-warning=ExperimentalWarning' node src/day10.ts < input.txt",
-		"dev": "NODE_OPTIONS='--disable-warning=ExperimentalWarning' node src/day10.ts < input.dev.txt"
+		"start": "NODE_OPTIONS='--disable-warning=ExperimentalWarning' node src/day11.ts < input.txt",
+		"dev": "NODE_OPTIONS='--disable-warning=ExperimentalWarning' node src/day11.ts < input.dev.txt"
 	},
 	"author": "",
 	"license": "ISC",
