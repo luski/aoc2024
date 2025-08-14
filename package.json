@@ -1,17 +1,17 @@
 {
-	"type": "module",
-	"name": "aoc2025",
-	"version": "1.0.0",
-	"main": "index.ts",
-	"scripts": {
-		"start": "NODE_OPTIONS='--disable-warning=ExperimentalWarning' node src/day11.ts < input.txt",
-		"dev": "NODE_OPTIONS='--disable-warning=ExperimentalWarning' node src/day11.ts < input.dev.txt"
-	},
-	"author": "",
-	"license": "ISC",
-	"description": "",
-	"dependencies": {
-		"@types/node": "^24.0.15",
-		"es-toolkit": "^1.39.8"
-	}
+  "type": "module",
+  "name": "aoc2025",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "start": "NODE_OPTIONS='--disable-warning=ExperimentalWarning' node src/day12.ts < input.txt",
+    "dev": "NODE_OPTIONS='--disable-warning=ExperimentalWarning' node src/day12.ts < input.dev.txt"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/node": "^24.0.15",
+    "es-toolkit": "^1.39.8"
+  }
 }
