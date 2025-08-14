@@ -105,16 +105,9 @@ function scanVertices(i: number, j: number, verticesMap: number[][]) {
   const [a, b, c, d] = V.map(([di, dj]) =>
     getVertValue(i + di, j + dj, verticesMap),
   );
-  if (!a && b && c && d) return 1;
-  if (a && !b && c && d) return 1;
-  if (a && b && !c && d) return 1;
-  if (a && b && c && !d) return 1;
-  if (!a && !b && !c && d) return 1;
-  if (!a && !b && c && !d) return 1;
-  if (!a && b && !c && !d) return 1;
-  if (a && !b && !c && !d) return 1;
-  if (a && !b && c && !d) return 2;
-  if (!a && b && !c && d) return 2;
+  const sum = a + b + c + d;
+  if (sum % 2 === 1) return 1;
+  if (sum === 2 && a !== b && b !== c && c !== d && d !== a) return 2;
   return 0;
 }
 
