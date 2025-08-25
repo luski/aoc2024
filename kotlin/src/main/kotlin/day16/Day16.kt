@@ -1,8 +1,6 @@
 package day16
 
-typealias Board = MutableList<MutableList<Char>>
-typealias ScoreBoard = MutableList<MutableList<Int>>
-typealias VisitBoard = MutableList<MutableList<Boolean>>
+typealias Board<T> = MutableList<MutableList<T>>
 typealias Pt = Pair<Int, Int>
 
 const val START = 'S'
@@ -10,7 +8,7 @@ const val END = 'E'
 const val EMPTY = '.'
 
 // Board extensions
-fun Board.extract(ch: Char): Pt = this.withIndex()
+fun Board<Char>.extract(ch: Char): Pt = this.withIndex()
     .firstNotNullOf { (col, line) ->
         line.indexOf(ch)
             .takeIf { it != -1 }
@@ -42,11 +40,11 @@ operator fun Pt.plus(direction: Direction): Pt = this + direction.offset
 
 // DTOs
 data class Action(val position: Pt, val cost: Int, val direction: Direction)
-data class InputData(val board: Board, val start: Pt, val end: Pt)
+data class InputData(val board: Board<Char>, val start: Pt, val end: Pt)
 
 
 fun readInput(): InputData {
-    val board: Board = generateSequence(::readlnOrNull).takeWhile(String::isNotBlank)
+    val board: Board<Char> = generateSequence(::readlnOrNull).takeWhile(String::isNotBlank)
         .map(String::toMutableList)
         .toMutableList()
 
@@ -56,7 +54,7 @@ fun readInput(): InputData {
     return InputData(board, start, end)
 }
 
-fun rec(board: Board, scoreBoard: ScoreBoard, pos: Pt, end: Pt, direction: Direction) {
+fun rec(board: Board<Char>, scoreBoard: Board<Int>, pos: Pt, end: Pt, direction: Direction) {
     if (pos == end) return
 
     for (action in nextActions(board, pos, direction)) {
@@ -67,11 +65,11 @@ fun rec(board: Board, scoreBoard: ScoreBoard, pos: Pt, end: Pt, direction: Direc
 }
 
 fun visit(
-    visitBoard: VisitBoard,
+    visitBoard: Board<Boolean>,
     currPosition: Pt,
     currDirection: Direction,
     turns: Int,
-    scoreBoard: ScoreBoard,
+    scoreBoard: Board<Int>,
     finish: Pt,
     allowedTurns: Int
 ) {
@@ -88,16 +86,16 @@ fun visit(
     }
 }
 
-fun nextActions(board: Board, pos: Pt, direction: Direction): List<Action> = Direction.entries.asSequence()
+fun nextActions(board: Board<Char>, pos: Pt, direction: Direction): List<Action> = Direction.entries.asSequence()
     .filter { it != direction.opposite && board[pos + it] == EMPTY }
     .map { Action(pos + it, if (direction == it) 1 else 1001, it) }
     .toList()
 
-fun nextDirections(scoreBoard: ScoreBoard, pos: Pt): List<Direction> = Direction.entries.asSequence()
+fun nextDirections(scoreBoard: Board<Int>, pos: Pt): List<Direction> = Direction.entries.asSequence()
     .filter { (scoreBoard[pos] % 1000) - 1 == scoreBoard[pos + it] % 1000 }
     .toList()
 
-fun calculateVisited(visitBoard: VisitBoard): Int = visitBoard
+fun calculateVisited(visitBoard: Board<Boolean>): Int = visitBoard
     .sumOf { row -> row.count { it } }
 
 fun main() {
