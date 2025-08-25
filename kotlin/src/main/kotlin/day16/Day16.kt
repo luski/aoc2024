@@ -1,7 +1,8 @@
-package day16.part1
+package day16
 
 typealias Board = MutableList<MutableList<Char>>
 typealias ScoreBoard = MutableList<MutableList<Int>>
+typealias VisitBoard = MutableList<MutableList<Boolean>>
 typealias Pt = Pair<Int, Int>
 
 const val START = 'S'
@@ -43,13 +44,6 @@ operator fun Pt.plus(direction: Direction): Pt = this + direction.offset
 data class Action(val position: Pt, val cost: Int, val direction: Direction)
 data class InputData(val board: Board, val start: Pt, val end: Pt)
 
-fun main() {
-    val (board, start, end) = readInput()
-    val scoreBoard = MutableList(board.size) { MutableList(board[0].size) { Int.MAX_VALUE } }
-    scoreBoard[start] = 0
-    rec(board, scoreBoard, start, end, Direction.RIGHT)
-    println(scoreBoard[end])
-}
 
 fun readInput(): InputData {
     val board: Board = generateSequence(::readlnOrNull).takeWhile(String::isNotBlank)
@@ -72,11 +66,49 @@ fun rec(board: Board, scoreBoard: ScoreBoard, pos: Pt, end: Pt, direction: Direc
     }
 }
 
+fun visit(
+    visitBoard: VisitBoard,
+    currPosition: Pt,
+    currDirection: Direction,
+    turns: Int,
+    scoreBoard: ScoreBoard,
+    finish: Pt,
+    allowedTurns: Int
+) {
+    visitBoard[currPosition] = true
+    if (currPosition == finish) return
+
+    for (nextDirection in nextDirections(scoreBoard, currPosition)) {
+        val nextTurns = if (nextDirection == currDirection) turns else turns + 1
+        val nextPosition = currPosition + nextDirection
+        val neighborTurns = scoreBoard[nextPosition] / 1000
+        if (nextTurns + neighborTurns > allowedTurns) continue
+
+        visit(visitBoard, nextPosition, nextDirection, nextTurns, scoreBoard, finish, allowedTurns)
+    }
+}
+
 fun nextActions(board: Board, pos: Pt, direction: Direction): List<Action> = Direction.entries.asSequence()
     .filter { it != direction.opposite && board[pos + it] == EMPTY }
     .map { Action(pos + it, if (direction == it) 1 else 1001, it) }
     .toList()
 
-fun printBoard(board: Board) {
-    board.forEach { println(it.joinToString("")) }
+fun nextDirections(scoreBoard: ScoreBoard, pos: Pt): List<Direction> = Direction.entries.asSequence()
+    .filter { (scoreBoard[pos] % 1000) - 1 == scoreBoard[pos + it] % 1000 }
+    .toList()
+
+fun calculateVisited(visitBoard: VisitBoard): Int = visitBoard
+    .sumOf { row -> row.count { it } }
+
+fun main() {
+    val (board, start, end) = readInput()
+    val scoreBoard = MutableList(board.size) { MutableList(board[0].size) { Int.MAX_VALUE } }
+    scoreBoard[start] = 0
+    rec(board, scoreBoard, start, end, Direction.RIGHT)
+    val visitBoard = MutableList(board.size) { MutableList(board[0].size) { false } }
+    val allowedTurns = scoreBoard[end] / 1000
+    visit(visitBoard, end, Direction.LEFT, 0, scoreBoard, start, allowedTurns)
+    visit(visitBoard, end, Direction.DOWN, 0, scoreBoard, start, allowedTurns)
+    println("Part 1: ${scoreBoard[end]}")
+    println("Part 2: ${calculateVisited(visitBoard)}")
 }
