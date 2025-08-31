@@ -29,14 +29,7 @@ class Tree(
     fun addPattern(pattern: String) {
         var node = root
         for (c in pattern) {
-            val child = node.children[c]
-            if (child != null) {
-                node = child
-            } else {
-                val newNode = TreeNode()
-                node.children[c] = newNode
-                node = newNode
-            }
+            node = node.children[c] ?: TreeNode().also { node.children[c] = it }
         }
         node.isEnd = true
     }
@@ -55,47 +48,33 @@ class Solution {
             .takeWhile(String::isNotBlank)
             .toList()
 
-    val cache = hashMapOf<Pair<String, TreeNode>, Boolean>()
+    val cache = hashMapOf<Pair<String, TreeNode>, Long>()
 
     fun matches(
         design: String,
         node: TreeNode = tree.root,
-    ): Boolean {
+    ): Long {
         if (cache.contains(design to node)) return cache.get(design to node)!!
-        if (design.isEmpty()) return node.isEnd
+        if (design.isEmpty()) return if (node.isEnd) 1 else 0
 
         val c = design.first()
         val rest = design.substring(1)
 
-        var nextNode = node.children[c]
-
-        if (nextNode != null) {
-            if (matches(rest, nextNode)) {
-                cache[design to node] = true
-                return true
-            }
-        }
-
+        var result = 0L
+        node.children[c]?.let { result += matches(rest, it) }
         if (node.isEnd) {
-            nextNode = tree.root.children[c]
-            if (nextNode == null) {
-                cache[design to node] = false
-                return false
-            }
-            val result = matches(rest, nextNode)
-            cache[design to node] = result
-            return result
+            tree.root.children[c]?.let { result += matches(rest, it) }
         }
-        cache[design to node] = false
-        return false
+        cache[design to node] = result
+        return result
     }
 
     fun solve() {
-        val result =
-            designs
-                .filter(::matches)
-                .size
-        println("Part 1: $result")
+        val result1 = designs.count { matches(it) > 0 }
+        println("Part 1: $result1")
+
+        val result2 = designs.sumOf(::matches)
+        println("Part 2: $result2")
     }
 }
 
